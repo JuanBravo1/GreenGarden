@@ -35,7 +35,7 @@ app.post('/insertDevice', async (req, res) => {
     console.log("Conexión exitosa a MongoDB Atlas");
 
     // Obtener una referencia a la base de datos y la colección
-    const db = client.db("greengarden");
+    const db = client.db("GreenGarden");
     const deviceCollection = db.collection("device");
     const deviceHistoryCollection = db.collection("device_history");
 
@@ -73,7 +73,7 @@ app.post('/device/sensor', async (req, res) => {
     console.log("Conexion exitosa a MongoDB Atlas");
 
     // Obtener una referencia a la base de datos y las colecciones
-    const db = client.db("greengarden");
+    const db = client.db("GreenGarden");
     const deviceCollection = db.collection("device");
 
     // Primero se comprueba si no existe el usuario
@@ -104,7 +104,7 @@ app.post('/user', async (req, res) => {
     console.log("Conexión exitosa a MongoDB Atlas");
 
     // Obtener una referencia a la base de datos y las colecciones
-    const db = client.db("greengarden");
+    const db = client.db("GreenGarden");
     const userCollection = db.collection("users");
 
     // Comprobar si no existe el usuario
@@ -139,7 +139,7 @@ app.post('/user/login', async (req, res) => {
     console.log("Conexion exitosa a MongoDB Atlas");
 
     // Obtener una referencia a la base de datos y las colecciones
-    const db = client.db("greengarden");
+    const db = client.db("GreenGarden");
     const userCollection = db.collection("users");
 
     const exists = await userCollection.findOne({ username: username, password: password });
