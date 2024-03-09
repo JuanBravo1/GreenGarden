@@ -89,7 +89,7 @@ app.post('/device/sensor', async (req, res) => {
     client.close();
   } catch (error) {
     console.error("Error al conectar MongoDB Atlas:", error);
-    res.status(500).send("Error al conectar a la base de datos");
+    res.status(500).send("Error al conectar a la base de datos:" + error);
   }
 });
 
