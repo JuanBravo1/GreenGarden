@@ -158,6 +158,25 @@ app.post('/user/login', async (req, res) => {
   }
 })
 
+//peticion para obtener productos
+app.get('/products', async (req, res) => {
+  try {
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    const db = client.db("GreenGarden");
+    const productsCollection = db.collection("productos");
+
+    const products = await productsCollection.find({}).toArray();
+    res.json(products);
+
+    client.close();
+  } catch (error) {
+    console.error("Error al conectar MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
 // Manejo MQTT peticiones
 const listen = (state) => {
   mqttClient.publish('CATHY', state);
