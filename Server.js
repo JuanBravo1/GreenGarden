@@ -147,7 +147,7 @@ app.post('/user/login', async (req, res) => {
       res.status(401).json({ status: false });
     } else {
       const { permisos, dispositivo } = exists;
-      res.status(200).json({ status: true, tipo: permisos, dispositivo: dispositivo });
+      res.status(200).json(exists);
     }
     client.close();
 
