@@ -148,6 +148,7 @@ app.post('/user/login', async (req, res) => {
     } else {
       const { permisos, dispositivo } = exists;
       res.status(200).json(exists);
+      console.log(exists);
     }
     client.close();
 
