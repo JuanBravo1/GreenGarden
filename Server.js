@@ -195,6 +195,34 @@ app.get('/devices', async (req, res) => {
   }
 });
 
+// Asumiendo que esta ruta maneja la edición del perfil
+app.post('/user/edit', async (req, res) => {
+  const userData = req.body;
+  try {
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección
+    const db = client.db("GreenGarden");
+    const userCollection = db.collection("users");
+
+    // Actualizar el perfil del usuario en la base de datos
+    await userCollection.updateOne({ username: userData.username }, { $set: userData });
+
+    // Cerrar la conexión
+    client.close();
+    console.log("Perfil de usuario actualizado");
+
+    // Responder con un mensaje de éxito
+    res.send("Perfil actualizado exitosamente");
+  } catch (error) {
+    console.error("Error al actualizar el perfil del usuario:", error);
+    res.status(500).send("Error al actualizar el perfil del usuario");
+  }
+});
+
+
 // Manejo MQTT peticiones
 const listen = (state) => {
   mqttClient.publish('CATHY', state);
