@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const cors = require('cors');
 const mqtt = require("mqtt");
 // Modulos utilizados
@@ -207,8 +207,8 @@ app.post('/user/edit', async (req, res) => {
     const db = client.db("GreenGarden");
     const userCollection = db.collection("users");
 
-    // Actualizar el perfil del usuario en la base de datos
-    await userCollection.updateOne({ username: userData.username }, { $set: userData });
+    // Actualizar el perfil del usuario en la base de datos usando el _id
+    await userCollection.updateOne({ _id: ObjectId(userData._id) }, { $set: userData });
 
     // Cerrar la conexión
     client.close();
@@ -221,6 +221,7 @@ app.post('/user/edit', async (req, res) => {
     res.status(500).send("Error al actualizar el perfil del usuario");
   }
 });
+
 
 
 // Manejo MQTT peticiones
