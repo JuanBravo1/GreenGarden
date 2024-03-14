@@ -235,7 +235,7 @@ app.post('/mqtt', (req, res) => {
   console.log('Body:', req.body);
 
   const { state } = req.body;
-  if (!state || !['lightON', 'lightOFF', 'fanON', 'fanOFF'].includes(state)) {
+  if (!state || !['ventanasON', 'ventanasOFF', 'riegoON', 'riegoOFF'].includes(state)) {
     return res.status(400).send('Parámetros inválidos');
   }
 
