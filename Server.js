@@ -240,7 +240,7 @@ app.post('/mqtt', (req, res) => {
   }
 
   listen(state);
-  res.status(200).send('Mensaje recibido correctamente');
+  res.status(200).send(req.body);
 });
 
 
