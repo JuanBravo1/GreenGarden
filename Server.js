@@ -22,7 +22,7 @@ app.use(cors());
 const mongoUrl = "mongodb+srv://greengarden:2MOdsHQX6cM8LDIO@greengarden.fjgd6uv.mongodb.net/?retryWrites=true&w=majority&appName=GreenGarden";
 
 // Cliente MQTT
-const mqttClient = mqtt.connect("mqtt://broker.hivemq.com");
+const mqttClient = mqtt.connect('mqtt://broker.emqx.io');
 
 
 // Ruta para recibir datos desde la ESP32
