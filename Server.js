@@ -239,7 +239,7 @@ app.post('/mqtt', (req, res) => {
     return res.status(400).send('Parámetros inválidos');
   }
   
-  mqttClient.publish('CATHY', "CLOSE");
+  mqttClient.publish('CATHY', state);
   console.log(`Mensaje "${state}" enviado al topic "CATHY" satisfactoriamente`);
   res.status(200).send(state);
 });
