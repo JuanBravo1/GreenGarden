@@ -238,9 +238,10 @@ app.post('/mqtt', (req, res) => {
   if (!state || !['OPEN', 'CLOSE', 'ON', 'OFF'].includes(state)) {
     return res.status(400).send('Parámetros inválidos');
   }
-
-  listen(state);
-  res.status(200).send(req.body);
+  
+  mqttClient.publish('CATHY', state);
+  console.log(`Mensaje "${state}" enviado al topic "CATHY" satisfactoriamente`);
+  res.status(200).send(state);
 });
 
 
