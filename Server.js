@@ -200,6 +200,8 @@ app.get('/devices', async (req, res) => {
 // Asumiendo que esta ruta maneja la edición del perfil
 app.post('/user/edit', async (req, res) => {
   const userData = req.body;
+  // Extraer el _id del objeto userData
+  const { _id, ...userDataWithoutId } = userData;
   try {
     // Conectar a la base de datos MongoDB Atlas
     const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -210,10 +212,10 @@ app.post('/user/edit', async (req, res) => {
     const userCollection = db.collection("users");
 
     // Convertir el _id a ObjectId
-    const userId = new ObjectId(userData._id);
+    const userId = new ObjectId(_id);
 
     // Actualizar el perfil del usuario en la base de datos usando el _id
-    await userCollection.updateOne({ _id: userId }, { $set: userData });
+    await userCollection.updateOne({ _id: userId }, { $set: userDataWithoutId });
 
     // Cerrar la conexión
     client.close();
