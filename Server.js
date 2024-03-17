@@ -209,8 +209,11 @@ app.post('/user/edit', async (req, res) => {
     const db = client.db("GreenGarden");
     const userCollection = db.collection("users");
 
+    // Convertir el _id a ObjectId
+    const userId = new ObjectId(userData._id);
+
     // Actualizar el perfil del usuario en la base de datos usando el _id
-    await userCollection.updateOne({ _id: ObjectId(userData._id) }, { $set: userData });
+    await userCollection.updateOne({ _id: userId }, { $set: userData });
 
     // Cerrar la conexión
     client.close();
