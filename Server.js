@@ -225,9 +225,9 @@ app.post('/user/edit', async (req, res) => {
 });
 
 // Ruta para obtener un usuario por su ID
-app.get('/user/:id', async (req, res) => {
-  const userId = new ObjectId();
-   userId = req.params.id;
+app.get('/user/:username', async (req, res) => {
+  const userName = req.params.username;
+   
 
   try {
     const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -236,7 +236,7 @@ app.get('/user/:id', async (req, res) => {
     const db = client.db("GreenGarden");
     const userCollection = db.collection("users");
 
-    const user = await userCollection.findOne({ _id: ObjectId(userId) });
+    const user = await userCollection.findOne({ username: userName });
 
     if (!user) {
       res.status(404).send("Usuario no encontrado");
