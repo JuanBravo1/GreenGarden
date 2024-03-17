@@ -210,7 +210,7 @@ app.post('/user/edit', async (req, res) => {
     const userCollection = db.collection("users");
 
     // Actualizar el perfil del usuario en la base de datos usando el _id
-    await userCollection.updateOne({ _id: ObjectId(userData._id) }, { $set: userData });
+    await userCollection.updateOne({ username: userData.username }, { $set: userData });
 
     // Cerrar la conexión
     client.close();
