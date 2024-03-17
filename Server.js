@@ -226,7 +226,8 @@ app.post('/user/edit', async (req, res) => {
 
 // Ruta para obtener un usuario por su ID
 app.get('/user/:id', async (req, res) => {
-  const userId = req.params.id;
+  const userId = new ObjectId();
+   userId = req.params.id;
 
   try {
     const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
