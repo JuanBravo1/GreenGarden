@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const { MongoClient, ObjectId } = require('mongodb');
 const cors = require('cors');
 const mqtt = require("mqtt");
+const { ObjectId } = require('mongodb');
+
 // Modulos utilizados
 
 const app = express();
