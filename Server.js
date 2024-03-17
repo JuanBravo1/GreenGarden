@@ -222,7 +222,31 @@ app.post('/user/edit', async (req, res) => {
   }
 });
 
+// Ruta para obtener un usuario por su ID
+app.get('/user/:id', async (req, res) => {
+  const userId = req.params.id;
 
+  try {
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    const db = client.db("GreenGarden");
+    const userCollection = db.collection("users");
+
+    const user = await userCollection.findOne({ _id: ObjectId(userId) });
+
+    if (!user) {
+      res.status(404).send("Usuario no encontrado");
+    } else {
+      res.json(user);
+    }
+
+    client.close();
+  } catch (error) {
+    console.error("Error al conectar MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
 
 // Manejo MQTT peticiones
 const listen = (state) => {
