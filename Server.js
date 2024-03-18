@@ -160,6 +160,39 @@ app.post('/user/login', async (req, res) => {
   }
 })
 
+app.post('/admin/login', async (req, res) => {
+  const data = req.body;
+  try {
+    // Validacion de datos
+    const { username, password } = data;
+    if (!username || !password) {
+      return res.status(400).send('Falta información de autenticación');
+    }
+
+    // Conectar a la base de datos MongoDBAtlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexion exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y las colecciones
+    const db = client.db("GreenGarden");
+    const userCollection = db.collection("admin");
+
+    const exists = await userCollection.findOne({ username: username, password: password });
+    if (!exists) {
+      res.status(401).json({ status: false });
+    } else {
+      const { permisos, dispositivo } = exists;
+      res.status(200).json(exists);
+      console.log(exists);
+    }
+    client.close();
+
+  } catch (error) {
+    console.error("Error al conectar MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+})
+
 //peticion para obtener productos
 app.get('/products', async (req, res) => {
   try {
