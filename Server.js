@@ -193,25 +193,6 @@ app.post('/admin/login', async (req, res) => {
   }
 })
 
-//peticion para obtener productos
-app.get('/products', async (req, res) => {
-  try {
-    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log("Conexión exitosa a MongoDB Atlas");
-
-    const db = client.db("GreenGarden");
-    const productsCollection = db.collection("productos");
-
-    const products = await productsCollection.find({}).toArray();
-    res.json(products);
-
-    client.close();
-  } catch (error) {
-    console.error("Error al conectar MongoDB Atlas:", error);
-    res.status(500).send("Error al conectar a la base de datos");
-  }
-});
-
 app.get('/devices', async (req, res) => {
   try {
     const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -384,6 +365,126 @@ try {
 
 });
 
+//Productos: 
+//peticion para obtener productos
+app.get('/products', async (req, res) => {
+  try {
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    const db = client.db("GreenGarden");
+    const productsCollection = db.collection("productos");
+
+    const products = await productsCollection.find({}).toArray();
+    res.json(products);
+
+    client.close();
+  } catch (error) {
+    console.error("Error al conectar MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
+// Agregar un nuevo producto
+app.post('/InsertProduct', async (req, res) => {
+
+  const data = req.body;
+  console.log(data);
+  try {
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección
+    const db = client.db("GreenGarden");
+    const collection = db.collection("productos");
+
+    // Verificar si el email ya existe en la colección
+    // Insertar los datos en la colección
+    await collection.insertOne({ ...data }); // Establecer permisos de usuario automáticamente
+
+    console.log("Datos insertados en la base de datos");
+
+    // Cerrar la conexión
+    client.close();
+    console.log("Conexión cerrada");
+
+    // Responder a la ESP32 con un mensaje de confirmación
+    res.send("Datos recibidos y guardados en la base de datos");
+  } catch (error) {
+    console.error("Error al conectar a MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
+// Actualizar un producto existente
+app.put('/productosedit/:id', async (req, res) => {
+  const productId = req.params.id; // Obtener el ID del usuario a editar desde los parámetros de la solicitud
+  const productData = req.body; // Obtener los datos del usuario a editar desde el cuerpo de la solicitud
+  console.log(productId);
+  try {
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección
+    const db = client.db("GreenGarden");
+    const collection = db.collection("productos");
+
+    // Realizar la actualización del usuario en la colección
+    const result = await collection.updateOne({ _id: new ObjectId(productId) }, { $set: productData });
+
+    // Verificar si se actualizó el usuario correctamente
+    if (result.modifiedCount === 1) {
+      console.log("Usuario actualizado correctamente.");
+      res.status(200).send("Usuario actualizado correctamente.");
+    } else {
+      console.log("El usuario no pudo ser encontrado o actualizado.");
+      res.status(404).send("El usuario no pudo ser encontrado o actualizado.");
+    }
+
+    // Cerrar la conexión
+    client.close();
+    console.log("Conexión cerrada");
+  } catch (error) {
+    console.error("Error al conectar a MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
+// Eliminar un producto
+app.delete('/productos/:id', async (req, res) => {
+  const productId = req.params.id; // Obtener el ID del usuario a eliminar desde los parámetros de la solicitud
+  console.log(productId);
+  try {
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección
+    const db = client.db("GreenGarden");
+    const collection = db.collection("productos");
+
+    // Realizar la eliminación del usuario en la colección
+    const result = await collection.deleteOne({ _id: new ObjectId(productId) });  // Suponiendo que el ID del usuario sea único
+
+    // Verificar si se eliminó el usuario correctamente
+    if (result.deletedCount === 1) {
+      console.log("Producto eliminado correctamente.");
+      res.status(200).send("Producto eliminado correctamente.");
+    } else {
+      console.log("El Producto no pudo ser encontrado o eliminado.");
+      res.status(404).send("El Producto no pudo ser encontrado o eliminado.");
+    }
+
+    // Cerrar la conexión
+    client.close();
+    console.log("Conexión cerrada");
+  } catch (error) {
+    console.error("Error al conectar a MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
 
 
 // Manejo MQTT peticiones
