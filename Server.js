@@ -378,13 +378,13 @@ app.put('/editar/:id', async (req, res) => {
   } catch (error) {
     console.error("Error al conectar a MongoDB Atlas:", error);
     res.status(500).send("Error al conectar a la base de datos");
-  }
+  };
 
 // Manejo MQTT peticiones
 const listen = (state) => {
   mqttClient.publish('CATHY', state);
   console.log(`Mensaje "${state}" enviado al topic "CATHY" satisfactoriamente`);
-};
+});
 
 // Manejo MQTT POST
 app.post('/mqtt', (req, res) => {
