@@ -384,7 +384,7 @@ app.put('/editar/:id', async (req, res) => {
 const listen = (state) => {
   mqttClient.publish('CATHY', state);
   console.log(`Mensaje "${state}" enviado al topic "CATHY" satisfactoriamente`);
-});
+};
 
 // Manejo MQTT POST
 app.post('/mqtt', (req, res) => {
