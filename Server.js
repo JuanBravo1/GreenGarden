@@ -432,7 +432,7 @@ app.put('/productosedit/:id', async (req, res) => {
     const collection = db.collection("productos");
 
     // Realizar la actualización del usuario en la colección
-    const result = await collection.updateOne({ _id: new ObjectId(productId) }, { $set: productData });
+    const result = await collection.updateOne({ _id: productId }, { $set: productData });
 
     // Verificar si se actualizó el usuario correctamente
     if (result.modifiedCount === 1) {
@@ -466,7 +466,7 @@ app.delete('/productos/:id', async (req, res) => {
     const collection = db.collection("productos");
 
     // Realizar la eliminación del usuario en la colección
-    const result = await collection.deleteOne({ _id: new ObjectId(productId) });  // Suponiendo que el ID del usuario sea único
+    const result = await collection.deleteOne({ _id: productId });  // Suponiendo que el ID del usuario sea único
 
     // Verificar si se eliminó el usuario correctamente
     if (result.deletedCount === 1) {
