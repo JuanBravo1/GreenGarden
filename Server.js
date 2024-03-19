@@ -419,8 +419,8 @@ app.post('/InsertProduct', async (req, res) => {
 
 // Actualizar un producto existente
 app.put('/productosedit/:id', async (req, res) => {
-  const productId = req.params.id; // Obtener el ID del usuario a editar desde los parámetros de la solicitud
-  const productData = req.body; // Obtener los datos del usuario a editar desde el cuerpo de la solicitud
+  const productId = parseInt(req.params.id); // Obtener el ID del producto a editar desde los parámetros de la solicitud
+  const productData = req.body; // Obtener los datos del producto a editar desde el cuerpo de la solicitud
   console.log(productId);
   try {
     // Conectar a la base de datos MongoDB Atlas
@@ -431,16 +431,16 @@ app.put('/productosedit/:id', async (req, res) => {
     const db = client.db("GreenGarden");
     const collection = db.collection("productos");
 
-    // Realizar la actualización del usuario en la colección
+    // Realizar la actualización del producto en la colección
     const result = await collection.updateOne({ _id: productId }, { $set: productData });
 
-    // Verificar si se actualizó el usuario correctamente
+    // Verificar si se actualizó el producto correctamente
     if (result.modifiedCount === 1) {
-      console.log("Usuario actualizado correctamente.");
-      res.status(200).send("Usuario actualizado correctamente.");
+      console.log("Producto actualizado correctamente.");
+      res.status(200).send("Producto actualizado correctamente.");
     } else {
-      console.log("El usuario no pudo ser encontrado o actualizado.");
-      res.status(404).send("El usuario no pudo ser encontrado o actualizado.");
+      console.log("El producto no pudo ser encontrado o actualizado.");
+      res.status(404).send("El producto no pudo ser encontrado o actualizado.");
     }
 
     // Cerrar la conexión
@@ -454,7 +454,7 @@ app.put('/productosedit/:id', async (req, res) => {
 
 // Eliminar un producto
 app.delete('/productos/:id', async (req, res) => {
-  const productId = req.params.id; // Obtener el ID del usuario a eliminar desde los parámetros de la solicitud
+  const productId = parseInt(req.params.id); // Obtener el ID del producto a eliminar desde los parámetros de la solicitud
   console.log(productId);
   try {
     // Conectar a la base de datos MongoDB Atlas
@@ -465,16 +465,16 @@ app.delete('/productos/:id', async (req, res) => {
     const db = client.db("GreenGarden");
     const collection = db.collection("productos");
 
-    // Realizar la eliminación del usuario en la colección
-    const result = await collection.deleteOne({ _id: productId });  // Suponiendo que el ID del usuario sea único
+    // Realizar la eliminación del producto en la colección
+    const result = await collection.deleteOne({ _id: productId });  // Suponiendo que el ID del producto sea único
 
-    // Verificar si se eliminó el usuario correctamente
+    // Verificar si se eliminó el producto correctamente
     if (result.deletedCount === 1) {
       console.log("Producto eliminado correctamente.");
       res.status(200).send("Producto eliminado correctamente.");
     } else {
-      console.log("El Producto no pudo ser encontrado o eliminado.");
-      res.status(404).send("El Producto no pudo ser encontrado o eliminado.");
+      console.log("El producto no pudo ser encontrado o eliminado.");
+      res.status(404).send("El producto no pudo ser encontrado o eliminado.");
     }
 
     // Cerrar la conexión
