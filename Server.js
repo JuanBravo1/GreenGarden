@@ -349,8 +349,10 @@ app.delete('/delete/:id', async (req, res) => {
 });
 
 app.put('/editar/:id', async (req, res) => {
+ const userId = req.params.id; // Obtener el ID del usuario a editar desde los parámetros de la solicitud
  const userData = req.body; // Obtener los datos del usuario a editar desde el cuerpo de la solicitud
-const { _id, ...userDataWithoutId } = userData; // Elimina el campo _id del objeto userData
+ const { _id, ...userDataWithoutId } = userData; // Elimina el campo _id del objeto userData
+
 try {
   // Conectar a la base de datos MongoDB Atlas
   const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -379,6 +381,7 @@ try {
   console.error("Error al conectar a MongoDB Atlas:", error);
   res.status(500).send("Error al conectar a la base de datos");
 }
+
 });
 
 
