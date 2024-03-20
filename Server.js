@@ -486,6 +486,33 @@ app.delete('/productos/:id', async (req, res) => {
   }
 });
 
+app.post('/coments', async (req, res) => {
+  const data = req.body;
+
+  try {
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección
+    const db = client.db("GreenGarden");
+    const comentsCollection = db.collection("comentarios");
+
+    // Historial de dispositivo
+    await comentsCollection.insertOne(data);
+
+    // Cerrar la conexión
+    client.close();
+    console.log("Conexión cerrada");
+
+    // Responder a la ESP32 con un mensaje de confirmación
+    res.send("Datos recibidos y guardados en la base de datos");
+  } catch (error) {
+    console.error("Error al conectar a MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos," + error);
+  }
+});
+
 
 // Manejo MQTT peticiones
 const listen = (state) => {
