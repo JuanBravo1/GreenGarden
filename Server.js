@@ -513,7 +513,38 @@ app.post('/coments', async (req, res) => {
   }
 });
 
+/* Cloudinari */
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const { v4: uuidv4 } = require('uuid');
+const cloudinary = require('cloudinary').v2;
 
+cloudinary.config({
+  cloud_name: 'ds6sucunj',
+  api_key: '772874229173864',
+  api_secret: 'TYM3LWIENLvPMOB7AzefRJztr2E'
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'Mascoteh/Products',
+    format: async (req, file) => 'png',
+    public_id: (req, file) => {
+      const randomName = uuidv4();
+      return randomName;
+    }
+  }
+});
+
+const upload = multer({ storage: storage });
+
+
+app.post('/upload-image', upload.single('imagen'), (req, res) => {
+  console.log("Imagen subida a Cloudinary con éxito");
+  // Devuelve la URL de la imagen subida a Cloudinary
+  res.json({ mensaje: 'Imagen subida a Cloudinary con éxito', url: req.file.path });
+});
 // Manejo MQTT peticiones
 const listen = (state) => {
   mqttClient.publish('CATHY', state);
