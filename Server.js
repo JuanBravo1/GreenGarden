@@ -531,6 +531,68 @@ app.get('/comentsAdmin', async (req, res) => {
   }
 });
 
+app.post('/validateComment', async (req, res) => {
+  const data = req.body;
+
+  try {
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección
+    const db = client.db("GreenGarden");
+    const comentsCollection = db.collection("comentarios_validados");
+
+    // Historial de dispositivo
+    await comentsCollection.insertOne(data);
+
+    // Cerrar la conexión
+    client.close();
+    console.log("Conexión cerrada");
+
+    // Responder a la ESP32 con un mensaje de confirmación
+    res.send("Datos recibidos y guardados en la base de datos");
+  } catch (error) {
+    console.error("Error al conectar a MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos," + error);
+  }
+});
+
+// Eliminar un producto
+app.delete('/eliminateComent/:id', async (req, res) => {
+  const comentId = req.params.id; // Obtener el ID del producto a eliminar desde los parámetros de la solicitud
+  console.log(productId);
+  try {
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección
+    const db = client.db("GreenGarden");
+    const collection = db.collection("productos");
+
+    // Realizar la eliminación del producto en la colección
+    const result = await collection.deleteOne({ _id: new ObjectId(comentId)});  // Suponiendo que el ID del producto sea único
+
+    // Verificar si se eliminó el producto correctamente
+    if (result.deletedCount === 1) {
+      console.log("Comentario eliminado correctamente.");
+      res.status(200).send("Comentario eliminado correctamente.");
+    } else {
+      console.log("El Comentario no pudo ser encontrado o eliminado.");
+      res.status(404).send("El Comentario no pudo ser encontrado o eliminado.");
+    }
+
+    // Cerrar la conexión
+    client.close();
+    console.log("Conexión cerrada");
+  } catch (error) {
+    console.error("Error al conectar a MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
+
 /* Cloudinari */
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
