@@ -569,7 +569,7 @@ app.delete('/eliminateComent/:id', async (req, res) => {
 
     // Obtener una referencia a la base de datos y la colección
     const db = client.db("GreenGarden");
-    const collection = db.collection("productos");
+    const collection = db.collection("comentarios");
 
     // Realizar la eliminación del producto en la colección
     const result = await collection.deleteOne({ _id: new ObjectId(comentId)});  // Suponiendo que el ID del producto sea único
