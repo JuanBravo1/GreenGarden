@@ -513,6 +513,24 @@ app.post('/coments', async (req, res) => {
   }
 });
 
+app.get('/comentsAdmin', async (req, res) => {
+  try {
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    const db = client.db("GreenGarden");
+    const productsCollection = db.collection("comentarios");
+
+    const products = await productsCollection.find({}).toArray();
+    res.json(products);
+
+    client.close();
+  } catch (error) {
+    console.error("Error al conectar MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
 /* Cloudinari */
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
@@ -520,15 +538,15 @@ const { v4: uuidv4 } = require('uuid');
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
-  cloud_name: 'ds6sucunj',
-  api_key: '772874229173864',
-  api_secret: 'TYM3LWIENLvPMOB7AzefRJztr2E'
+  cloud_name: 'dvtf5ajs4',
+  api_key: '573622155884332',
+  api_secret: 'n1Wujup61NhR2_ZwyARCTVmEMig'
 });
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'Mascoteh/Products',
+    folder: 'Productos',
     format: async (req, file) => 'png',
     public_id: (req, file) => {
       const randomName = uuidv4();
