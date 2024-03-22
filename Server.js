@@ -531,8 +531,9 @@ app.get('/comentsAdmin', async (req, res) => {
   }
 });
 
-app.post('/validateComment', async (req, res) => {
+app.post('/validateComment/:id', async (req, res) => {
   const data = req.body;
+   const comentId = req.params.id;
 
   try {
     // Conectar a la base de datos MongoDB Atlas
@@ -542,9 +543,12 @@ app.post('/validateComment', async (req, res) => {
     // Obtener una referencia a la base de datos y la colección
     const db = client.db("GreenGarden");
     const comentsCollection = db.collection("comentarios_validados");
+    const comentsEl = db.collection("comentarios");
 
     // Historial de dispositivo
     await comentsCollection.insertOne(data);
+
+    await comentsEl.deleteOne({_id: new ObjectId(comentId)});
 
     // Cerrar la conexión
     client.close();
@@ -561,7 +565,7 @@ app.post('/validateComment', async (req, res) => {
 // Eliminar un producto
 app.delete('/eliminateComent/:id', async (req, res) => {
   const comentId = req.params.id; // Obtener el ID del producto a eliminar desde los parámetros de la solicitud
-  console.log(productId);
+  console.log(comentId);
   try {
     // Conectar a la base de datos MongoDB Atlas
     const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
