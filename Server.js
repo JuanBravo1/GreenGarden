@@ -596,6 +596,24 @@ app.delete('/eliminateComent/:id', async (req, res) => {
   }
 });
 
+app.get('/comentsPublic', async (req, res) => {
+  try {
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    const db = client.db("GreenGarden");
+    const productsCollection = db.collection("comentarios_validados");
+
+    const products = await productsCollection.find({}).toArray();
+    res.json(products);
+
+    client.close();
+  } catch (error) {
+    console.error("Error al conectar MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
 
 /* Cloudinari */
 const multer = require('multer');
