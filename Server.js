@@ -385,37 +385,6 @@ app.get('/products', async (req, res) => {
   }
 });
 
-// Agregar un nuevo producto
-app.post('/InsertProduct', async (req, res) => {
-
-  const data = req.body;
-  console.log(data);
-  try {
-    // Conectar a la base de datos MongoDB Atlas
-    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log("Conexión exitosa a MongoDB Atlas");
-
-    // Obtener una referencia a la base de datos y la colección
-    const db = client.db("GreenGarden");
-    const collection = db.collection("productos");
-
-    // Verificar si el email ya existe en la colección
-    // Insertar los datos en la colección
-    await collection.insertOne({ ...data }); // Establecer permisos de usuario automáticamente
-
-    console.log("Datos insertados en la base de datos");
-
-    // Cerrar la conexión
-    client.close();
-    console.log("Conexión cerrada");
-
-    // Responder a la ESP32 con un mensaje de confirmación
-    res.send("Datos recibidos y guardados en la base de datos");
-  } catch (error) {
-    console.error("Error al conectar a MongoDB Atlas:", error);
-    res.status(500).send("Error al conectar a la base de datos");
-  }
-});
 
 // Actualizar un producto existente
 app.put('/productosedit/:id', async (req, res) => {
@@ -631,7 +600,11 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'Productos',
-    format: async (req, file) => 'png',
+    format: async (req, file) => {
+      // Obtener la extensión del archivo original
+      const fileExtension = file.originalname.split('.').pop();
+      return fileExtension;
+    },
     public_id: (req, file) => {
       const randomName = uuidv4();
       return randomName;
@@ -647,6 +620,48 @@ app.post('/upload-image', upload.single('imagen'), (req, res) => {
   // Devuelve la URL de la imagen subida a Cloudinary
   res.json({ mensaje: 'Imagen subida a Cloudinary con éxito', url: req.file.path });
 });
+
+app.post('/InsertProduct', upload.single('imagen'), async (req, res) => {
+  console.log("entre en la ruta para insertar productos");
+
+  try {
+    // Extraer los datos del producto del cuerpo de la solicitud
+    const data = req.body;
+
+    // Verificar si se ha subido una imagen y obtener su URL de Cloudinary si es así
+    let image = null;
+    if (req.file) {
+      image = req.file.path; // Obtener la URL de la imagen subida a Cloudinary
+    }
+
+    // Agregar la URL de la imagen a los datos del producto
+    data.img = image;
+
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección
+    const db = client.db("GreenGarden");
+    const collection = db.collection("productos");
+
+    // Insertar los datos en la colección
+    await collection.insertOne(data);
+
+    console.log("Datos insertados en la base de datos");
+
+    // Cerrar la conexión
+    client.close();
+    console.log("Conexión cerrada");
+
+    // Responder con un mensaje de confirmación
+    res.send("Datos recibidos y guardados en la base de datos");
+  } catch (error) {
+    console.error("Error al conectar a MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
 // Manejo MQTT peticiones
 const listen = (state) => {
   mqttClient.publish('CATHY', state);
