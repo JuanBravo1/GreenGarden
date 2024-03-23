@@ -615,13 +615,13 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 
-app.post('/upload-image', upload.single('imagen'), (req, res) => {
+app.post('/upload-image', upload.single('Img'), (req, res) => {
   console.log("Imagen subida a Cloudinary con éxito");
   // Devuelve la URL de la imagen subida a Cloudinary
   res.json({ mensaje: 'Imagen subida a Cloudinary con éxito', url: req.file.path });
 });
 
-app.post('/InsertProduct', upload.single('imagen'), async (req, res) => {
+app.post('/InsertProduct', upload.single('Img'), async (req, res) => {
   console.log("entre en la ruta para insertar productos");
 
   try {
@@ -635,7 +635,7 @@ app.post('/InsertProduct', upload.single('imagen'), async (req, res) => {
     }
 
     // Agregar la URL de la imagen a los datos del producto
-    data.img = image;
+    data.Img = image;
 
     // Conectar a la base de datos MongoDB Atlas
     const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
