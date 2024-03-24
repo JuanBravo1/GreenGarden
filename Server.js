@@ -703,6 +703,25 @@ app.put('/productosedit/:id', upload.single('Img'), async (req, res) => {
   }
 });
 
+
+app.get('/about', async (req, res) => {
+  try {
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    const db = client.db("GreenGarden");
+    const aboutCollection = db.collection("about");
+
+    const about = await aboutCollection.find({}).toArray();
+    res.json(about);
+
+    client.close();
+  } catch (error) {
+    console.error("Error al conectar MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
 // Manejo MQTT peticiones
 const listen = (state) => {
   mqttClient.publish('CATHY', state);
