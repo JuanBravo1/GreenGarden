@@ -386,44 +386,10 @@ app.get('/products', async (req, res) => {
 });
 
 
-// Actualizar un producto existente
-app.put('/productosedit/:id', async (req, res) => {
-  const productId = parseInt(req.params.id); // Obtener el ID del producto a editar desde los parámetros de la solicitud
-  const productData = req.body; // Obtener los datos del producto a editar desde el cuerpo de la solicitud
-  console.log(productId);
-  try {
-    // Conectar a la base de datos MongoDB Atlas
-    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log("Conexión exitosa a MongoDB Atlas");
-
-    // Obtener una referencia a la base de datos y la colección
-    const db = client.db("GreenGarden");
-    const collection = db.collection("productos");
-
-    // Realizar la actualización del producto en la colección
-    const result = await collection.updateOne({ _id: productId }, { $set: productData });
-
-    // Verificar si se actualizó el producto correctamente
-    if (result.modifiedCount === 1) {
-      console.log("Producto actualizado correctamente.");
-      res.status(200).send("Producto actualizado correctamente.");
-    } else {
-      console.log("El producto no pudo ser encontrado o actualizado.");
-      res.status(404).send("El producto no pudo ser encontrado o actualizado.");
-    }
-
-    // Cerrar la conexión
-    client.close();
-    console.log("Conexión cerrada");
-  } catch (error) {
-    console.error("Error al conectar a MongoDB Atlas:", error);
-    res.status(500).send("Error al conectar a la base de datos");
-  }
-});
 
 // Eliminar un producto
 app.delete('/productos/:id', async (req, res) => {
-  const productId = parseInt(req.params.id); // Obtener el ID del producto a eliminar desde los parámetros de la solicitud
+  const productId = req.params.id; // Obtener el ID del producto a eliminar desde los parámetros de la solicitud
   console.log(productId);
   try {
     // Conectar a la base de datos MongoDB Atlas
@@ -435,7 +401,7 @@ app.delete('/productos/:id', async (req, res) => {
     const collection = db.collection("productos");
 
     // Realizar la eliminación del producto en la colección
-    const result = await collection.deleteOne({ _id: productId });  // Suponiendo que el ID del producto sea único
+    const result = await collection.deleteOne({ _id: new ObjectId (productId) });  // Suponiendo que el ID del producto sea único
 
     // Verificar si se eliminó el producto correctamente
     if (result.deletedCount === 1) {
