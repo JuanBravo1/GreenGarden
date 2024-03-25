@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const { MongoClient, ObjectId } = require('mongodb');
 const cors = require('cors');
 const mqtt = require("mqtt");
-
+const nodemailer = require('nodemailer'); // Importar nodemailer
+const uuid = require('uuid'); // Importar uuid
 
 // Modulos utilizados
 
@@ -24,6 +25,44 @@ const mongoUrl = "mongodb+srv://greengarden:2MOdsHQX6cM8LDIO@greengarden.fjgd6uv
 
 // Cliente MQTT
 const mqttClient = mqtt.connect('mqtt://broker.emqx.io');
+
+
+
+// Configurar transporte de correo
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: "greengarden.indrustries@gmail.com",
+    pass: "kasq dtok qncx ilyc",
+  },
+});
+
+
+
+// Ruta para enviar correo electrónico
+app.post('/email', (req, res) => {
+  const { email } = req.body;
+  const uniqueToken = uuid.v4().slice(0, 6);
+  const mailOptions = {
+    from: "greengarden.indrustries@gmail.com",
+    to: email,
+    subject: 'Recuperacion de contraseña',
+    text: ` Token: ${uniqueToken}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error al enviar el correo electrónico:', error);
+      return res.status(500).json({ status: false, error: 'Error al enviar el correo electrónico', details: error });
+    } else {
+      console.log('Correo electrónico enviado:', info.response);
+      return res.status(200).json({ status: true, message: 'Correo electrónico enviado exitosamente', token: uniqueToken });
+    }
+  });
+});
+
+
+
 
 
 // Ruta para recibir datos desde la ESP32
