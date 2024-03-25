@@ -61,6 +61,41 @@ app.post('/email', (req, res) => {
   });
 });
 
+// Ruta para verificar si un email ya existe en la base de datos
+app.post('/emailExists', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección de usuarios
+    const db = client.db("GreenGarden");
+    const userCollection = db.collection("users");
+
+    // Buscar si el email ya existe en la base de datos
+    const existingUser = await userCollection.findOne({ email: email });
+
+    // Verificar si el email existe o no
+    if (existingUser) {
+      console.log("El email ya está registrado en la base de datos");
+      res.status(200).json({ exists: true });
+    } else {
+      console.log("El email no está registrado en la base de datos");
+      res.status(200).json({ exists: false });
+    }
+
+    // Cerrar la conexión
+    client.close();
+    console.log("Conexión cerrada");
+  } catch (error) {
+    console.error("Error al conectar a MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
+
 
 
 
