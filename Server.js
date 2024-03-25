@@ -115,6 +115,39 @@ app.post('/emailExists', async (req, res) => {
   }
 });
 
+// Ruta para validar el token
+app.get('/validateToken/:token', async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección de usuarios
+    const db = client.db("GreenGarden");
+    const userCollection = db.collection("users");
+
+    // Buscar el usuario con el token proporcionado
+    const user = await userCollection.findOne({ token: token });
+
+    // Verificar si se encontró un usuario con el token proporcionado
+    if (user) {
+      // Token válido, puedes realizar acciones adicionales aquí si es necesario
+      res.status(200).json({ valid: true });
+    } else {
+      // Token inválido
+      res.status(404).json({ valid: false, message: 'Token inválido' });
+    }
+
+    // Cerrar la conexión
+    client.close();
+    console.log("Conexión cerrada");
+  } catch (error) {
+    console.error("Error al conectar a MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
 
 
 
