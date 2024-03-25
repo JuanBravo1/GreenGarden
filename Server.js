@@ -19,8 +19,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // URL de conexión a tu base de datos MongoDB Atlas
-//"mongodb+srv://notjm:tqsjTGz5oWJlOdm2@eco-nido.dbwpny9.mongodb.net/?retryWrites=true&w=majority&appName=Eco-Nido"
-// mongodb+srv://notjm:tqsjTGz5oWJlOdm2@eco-nido.dbwpny9.mongodb.net/?retryWrites=true&w=majority&appName=Eco-Nido
+
 const mongoUrl = "mongodb+srv://greengarden:2MOdsHQX6cM8LDIO@greengarden.fjgd6uv.mongodb.net/?retryWrites=true&w=majority&appName=GreenGarden";
 
 // Cliente MQTT
