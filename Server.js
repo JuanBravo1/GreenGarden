@@ -40,7 +40,7 @@ const transporter = nodemailer.createTransport({
 
 
 // Ruta para enviar correo electrónico
-app.post('/email', (req, res) => {
+app.post('/email', async (req, res) => {
   const { email } = req.body;
   const uniqueToken = uuid.v4().slice(0, 6);
   const mailOptions = {
@@ -50,13 +50,33 @@ app.post('/email', (req, res) => {
     text: ` Token: ${uniqueToken}`,
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
+  transporter.sendMail(mailOptions, async (error, info) => {
     if (error) {
       console.error('Error al enviar el correo electrónico:', error);
       return res.status(500).json({ status: false, error: 'Error al enviar el correo electrónico', details: error });
     } else {
       console.log('Correo electrónico enviado:', info.response);
-      return res.status(200).json({ status: true, message: 'Correo electrónico enviado exitosamente', token: uniqueToken });
+      try {
+        // Conectar a la base de datos MongoDB Atlas
+        const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+        console.log("Conexión exitosa a MongoDB Atlas");
+
+        // Obtener una referencia a la base de datos y la colección de usuarios
+        const db = client.db("GreenGarden");
+        const userCollection = db.collection("users");
+
+        // Actualizar el usuario con el token generado
+        await userCollection.updateOne({ email: email }, { $set: { token: uniqueToken } });
+
+        // Cerrar la conexión
+        client.close();
+        console.log("Conexión cerrada");
+
+        return res.status(200).json({ status: true, message: 'Correo electrónico enviado exitosamente', token: uniqueToken });
+      } catch (error) {
+        console.error("Error al conectar a MongoDB Atlas:", error);
+        res.status(500).send("Error al conectar a la base de datos");
+      }
     }
   });
 });
