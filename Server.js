@@ -130,7 +130,8 @@ app.post('/changePassword', async (req, res) => {
     const userCollection = db.collection("users");
 
     // Buscar al usuario con el token proporcionado
-    const user = await userCollection.findOne({ token });
+    const user = await userCollection.findOne({ token: String(token) });
+
 
     // Verificar si el usuario fue encontrado
     if (user) {
