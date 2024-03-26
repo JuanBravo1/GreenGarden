@@ -118,7 +118,7 @@ app.post('/emailExists', async (req, res) => {
 
 //contraseña por email
 app.post('/changePassword', async (req, res) => {
-  const { token, newPassword } = req.body;
+  const { email, newPassword } = req.body;
 
   try {
     // Conectar a la base de datos MongoDB Atlas
@@ -129,9 +129,8 @@ app.post('/changePassword', async (req, res) => {
     const db = client.db("GreenGarden");
     const userCollection = db.collection("users");
 
-    // Buscar al usuario con el token proporcionado
-    const user = await userCollection.findOne({ token: String(token) });
-
+    // Buscar al usuario con el correo electrónico proporcionado
+    const user = await userCollection.findOne({ email });
 
     // Verificar si el usuario fue encontrado
     if (user) {
