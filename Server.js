@@ -116,6 +116,45 @@ app.post('/emailExists', async (req, res) => {
   }
 });
 
+//contraseña por email
+app.post('/changePassword', async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    // Conectar a la base de datos MongoDB Atlas
+    const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Conexión exitosa a MongoDB Atlas");
+
+    // Obtener una referencia a la base de datos y la colección de usuarios
+    const db = client.db("GreenGarden");
+    const userCollection = db.collection("users");
+
+    // Buscar al usuario con el token proporcionado
+    const user = await userCollection.findOne({ token });
+
+    // Verificar si el usuario fue encontrado
+    if (user) {
+      // Actualizar la contraseña del usuario
+      await userCollection.updateOne({ _id: user._id }, { $set: { password: newPassword } });
+      console.log("Contraseña actualizada exitosamente");
+
+      // Cerrar la conexión
+      client.close();
+      console.log("Conexión cerrada");
+
+      // Responder con un código de estado 200 (OK)
+      res.status(200).send("Contraseña actualizada exitosamente");
+    } else {
+      // Si el usuario no fue encontrado, responder con un código de estado 404 (No encontrado)
+      res.status(404).send("Usuario no encontrado");
+    }
+  } catch (error) {
+    // Manejar errores de conexión a la base de datos
+    console.error("Error al conectar a MongoDB Atlas:", error);
+    res.status(500).send("Error al conectar a la base de datos");
+  }
+});
+
 
 // Ruta para recibir datos desde la ESP32
 app.post('/insertDevice', async (req, res) => {
