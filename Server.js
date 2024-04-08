@@ -896,7 +896,7 @@ app.post('/mqtt', (req, res) => {
   console.log('Body:', req.body);
 
   const { state } = req.body;
-  if (!state || !['OPEN', 'CLOSE', 'ON', 'OFF'].includes(state)) {
+  if (!state || !['OPEN', 'CLOSE', 'ON', 'OFF', 'VENTILADOR_ON', 'VENTILADOR_OFF'].includes(state)) {
     return res.status(400).send('Parámetros inválidos');
   }
   
@@ -904,7 +904,6 @@ app.post('/mqtt', (req, res) => {
   console.log(`Mensaje "${state}" enviado al topic "CATHY" satisfactoriamente`);
   res.status(200).send(state);
 });
-
 
 // Manejar errores 404 para rutas no encontradas
 app.use((req, res, next) => {
