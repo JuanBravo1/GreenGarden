@@ -5,6 +5,17 @@ const cors = require('cors');
 const mqtt = require("mqtt");
 const nodemailer = require('nodemailer'); // Importar nodemailer
 const uuid = require('uuid'); // Importar uuid
+const socketIo = require('socket.io');
+
+const io = socketIo(server);
+
+io.on('connection', (socket) => {
+  console.log('Client connected');
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
 
 // Modulos utilizados
 
