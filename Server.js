@@ -10,6 +10,8 @@ const socketIo = require('socket.io');
 const app = express();
 const port = 8080;
 
+app.use(cors());
+
 const server = app.listen(port, () => {
   console.log(`Servidor corriendo en el puerto ${port}`);
 });
