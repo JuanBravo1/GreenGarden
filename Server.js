@@ -935,7 +935,3 @@ app.use((err, req, res, next) => {
   res.status(500).send('Error del servidor');
 });
 
-// Iniciar el servidor
-app.listen(port, () => {
-  console.log(`Servidor Node.js escuchando en http://localhost:${port}`);
-});
