@@ -7,7 +7,16 @@ const nodemailer = require('nodemailer'); // Importar nodemailer
 const uuid = require('uuid'); // Importar uuid
 const socketIo = require('socket.io');
 
+const app = express();
+const port = 8080;
+
+const server = app.listen(port, () => {
+  console.log(`Servidor corriendo en el puerto ${port}`);
+});
+
+
 const io = socketIo(server);
+
 
 io.on('connection', (socket) => {
   console.log('Client connected');
@@ -19,8 +28,7 @@ io.on('connection', (socket) => {
 
 // Modulos utilizados
 
-const app = express();
-const port = 8080;
+
 // Configuracion del puerto
 
 // Configurar middleware para analizar el cuerpo de las solicitudes HTTP
