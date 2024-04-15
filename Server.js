@@ -245,6 +245,38 @@ app.post('/device/sensor', async (req, res) => {
   }
 });
 
+app.put('/devices/:device', async (req, res) => {
+    const { device } = req.params;
+    const { ventana, riego, ventilador } = req.body; // Los nuevos estados a actualizar
+
+    try {
+        const client = await MongoClient.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+        const db = client.db("GreenGarden");
+        const devicesCollection = db.collection("device");
+
+        const update = {};
+        if (ventana !== undefined) {
+            update.ventana = ventana;
+        }
+        if (riego !== undefined) {
+            update.riego = riego;
+        }
+        if (ventilador !== undefined) {
+            update.ventilador = ventilador;
+        }
+
+        // Actualizar el dispositivo en la base de datos
+        await devicesCollection.updateOne({ device: device }, { $set: update });
+
+        res.status(200).send('Estado actualizado en la base de datos');
+
+        client.close();
+    } catch (error) {
+        console.error('Error al actualizar la base de datos:', error);
+        res.status(500).send('Error al actualizar la base de datos');
+    }
+});
+
 // Ruta para recibir datos de mi ecoWeb (Registro de usuarios)
 app.post('/user', async (req, res) => {
   const data = req.body;
